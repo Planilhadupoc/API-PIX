@@ -1,9 +1,9 @@
-const express = require('express');
-const cors = require('cors');
-const mercadopago = require('mercadopago');
+import express from 'express';
+import cors from 'cors';
+import mercadopago from 'mercadopago';
+import serverless from 'serverless-http';
 
 const app = express();
-const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -12,7 +12,7 @@ app.use(express.json());
 const accessToken = process.env.MP_ACCESS_TOKEN;
 if (!accessToken) {
   console.error('ERRO: A variável MP_ACCESS_TOKEN não está definida.');
-  process.exit(1);
+  throw new Error('ERRO: A variável MP_ACCESS_TOKEN não está definida.');
 }
 
 mercadopago.configure({
@@ -20,12 +20,12 @@ mercadopago.configure({
 });
 
 // Rota GET básica para testar
-app.get('/api', (req, res) => {
-  res.send('API Pix rodando com sucesso!');
+app.get('/', (req, res) => {
+  res.send('API Pix rodando com sucesso na Vercel!');
 });
 
 // Integração com Mercado Pago para criar pagamento via Pix
-app.post('/api/mp-pix', async (req, res) => {
+app.post('/mp-pix', async (req, res) => {
   const { valor, nome, email } = req.body;
 
   if (!valor) {
@@ -58,13 +58,11 @@ app.post('/api/mp-pix', async (req, res) => {
 });
 
 // Endpoint de Webhook para notificações do Mercado Pago (opcional)
-app.post('/api/webhook/mp', (req, res) => {
+app.post('/webhook/mp', (req, res) => {
   const notificacao = req.body;
   console.log("Notificação recebida do Mercado Pago:", notificacao);
   res.status(200).send("Notificação recebida");
 });
 
-// Iniciar servidor (funciona localmente, na Vercel não precisa)
-app.listen(port, () => {
-  console.log(`Servidor rodando na porta ${port}`);
-});
+// Exporta o servidor no formato serverless
+export default serverless(app);
