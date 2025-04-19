@@ -1,0 +1,16 @@
+{
+  "name": "node-server-pix",
+  "version": "1.0.0",
+  "description": "Servidor API para integração com Pix via Mercado Pago",
+  "main": "API/index.js",
+  "scripts": {
+    "start": "node API/index.js",
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mongoose": "^6.9.1",
+    "mercadopago": "^2.0.3"
+  }
+}
